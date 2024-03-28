@@ -6,7 +6,7 @@ namespace Vadimknh\CrudGenerator\CrudGeneratorClass;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class CrudGeneratorService
+class ApiCrudGeneratorService
 {
     /** 
      * Get stub files by name
@@ -15,11 +15,12 @@ class CrudGeneratorService
      */
     protected static function GetStubs($type)
     {
+        // temp: return file_get_contents(__DIR__ . "/../resources/stubs/$type.stub");
         return file_get_contents(resource_path("/views/vendor/vadimknh/stubs/$type.stub"));
     }
 
     /** 
-     * Сreate controller from stub file 
+     * Сreate controller from stub file
      * 
      * @param $name
      */
@@ -36,7 +37,7 @@ class CrudGeneratorService
                 strtolower($name)
             ],
 
-           CrudGeneratorService::GetStubs('Controller')
+           ApiCrudGeneratorService::GetStubs('ApiController')
         );
 
         file_put_contents(app_path("/Http/Controllers/{$name}Controller.php"), $template);
@@ -59,7 +60,7 @@ class CrudGeneratorService
                 strtolower( Str::plural($name)),
             ],
 
-            CrudGeneratorService::GetStubs('Model')
+            ApiCrudGeneratorService::GetStubs('Model')
         );
 
         file_put_contents(app_path("/Models/{$name}.php"), $template);
@@ -75,7 +76,7 @@ class CrudGeneratorService
         $template = str_replace(
             ['{{modelName}}'],
             [$name],
-           CrudGeneratorService::GetStubs('StoreRequest')
+           ApiCrudGeneratorService::GetStubs('StoreRequest')
         );
 
         if (! file_exists($path=app_path('/Http/Requests/')))
@@ -94,7 +95,7 @@ class CrudGeneratorService
         $template = str_replace(
             ['{{modelName}}'],
             [$name],
-           CrudGeneratorService::GetStubs('UpdateRequest')
+            ApiCrudGeneratorService::GetStubs('UpdateRequest')
         );
 
         if (! file_exists($path=app_path('/Http/Requests/')))
@@ -115,21 +116,40 @@ class CrudGeneratorService
         $template = str_replace(
             ['{{modelNamePluralLowerCase}}'],
             [strtolower( Str::plural($name))],
-           CrudGeneratorService::GetStubs('Migration')
+           ApiCrudGeneratorService::GetStubs('Migration')
         );
 
         file_put_contents(base_path("database/migrations/" . date('Y_m_d_His') . "_create_" . strtolower( Str::plural($name)) . "_table.php"), $template);
     }
 
     /** 
-     * Create route in web.php file
+     * Create route in api.php file
      * 
      * @param $name
      */
     public static function MakeRoute($name)
     {
-        $path_to_file  = base_path('routes/web.php');
-        $append_route = 'Route::resource(\'' . Str::plural(strtolower($name)) . "', App\Http\Controllers\\{$name}Controller::class); \n";
+        $path_to_file  = base_path('routes/api.php');
+        $append_route = 'Route::apiResource(\'' . Str::plural(strtolower($name)) . "', App\Http\Controllers\\{$name}Controller::class); \n";
         File::append($path_to_file, $append_route);
+    }
+
+    /** 
+     * Create api resource from stub file
+     * 
+     * @param $name
+     */
+    public static function MakeResource($name)
+    {
+        $template = str_replace(
+            ['{{modelName}}'],
+            [$name],
+           ApiCrudGeneratorService::GetStubs('Resource')
+        );
+
+        if (! file_exists($path=app_path('/Http/Resources/')))
+            mkdir($path, 0777, true);
+
+        file_put_contents(app_path("/Http/Resources/{$name}Resource.php"), $template);
     }
 }

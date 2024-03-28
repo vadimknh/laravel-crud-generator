@@ -1,9 +1,9 @@
 <?php
 
-namespace Salman\CrudGenerator;
+namespace Vadimknh\CrudGenerator;
 
 use Illuminate\Support\ServiceProvider;
-use Salman\CrudGenerator\Commands\CrudGenerator;
+use Vadimknh\CrudGenerator\Commands\CrudGenerator;
 
 class CrudGeneratorServiceProvider extends ServiceProvider
 {
@@ -14,10 +14,12 @@ class CrudGeneratorServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->loadViewsFrom(__DIR__.'/resources/stubs', 'CrudGenerator');
+        $this->loadViewsFrom(__DIR__ . '/resources/stubs', 'CrudGenerator');
 
+        // php artisan vendor:publish 
+        // Copy stubs to LaravelApp/resources/views
         $this->publishes([
-            __DIR__.'/resources/stubs' => resource_path('vendor/salmanzafar/stubs'),
+            __DIR__.'/resources/stubs' => resource_path('views/vendor/vadimknh/stubs'),
         ]);
     }
 

@@ -1,9 +1,10 @@
 <?php
 
-namespace Salman\CrudGenerator\Commands;
+namespace Vadimknh\CrudGenerator\Commands;
 
 use Illuminate\Console\Command;
-use Salman\CrudGenerator\CrudGeneratorClass\CrudGeneratorService;
+use Vadimknh\CrudGenerator\CrudGeneratorClass\CrudGeneratorService;
+use Vadimknh\CrudGenerator\CrudGeneratorClass\ApiCrudGeneratorService;
 
 class CrudGenerator extends Command
 {
@@ -12,7 +13,7 @@ class CrudGenerator extends Command
      *
      * @var string
      */
-    protected $signature = 'crud:generate {name : Class (Singular), e.g User, Place, Car}';
+    protected $signature = 'crud:generate {name : Class (Singular), e.g User, Place, Car} {--api}';
 
     /**
      * The console command description.
@@ -38,14 +39,30 @@ class CrudGenerator extends Command
      */
     public function handle()
     {
-        $name = $this->argument('name');
+        $name =  $this->argument('name');
+        $api = $this->option('api');
 
-        CrudGeneratorService::MakeController($name);
-        CrudGeneratorService::MakeModel($name);
-        CrudGeneratorService::MakeRequest($name);
-        CrudGeneratorService::MakeMigration($name);
-        CrudGeneratorService::MakeRoute($name);
+        if ($api) {
+            ApiCrudGeneratorService::MakeController($name);
+            ApiCrudGeneratorService::MakeModel($name);
+            ApiCrudGeneratorService::MakeStoreRequest($name);
+            ApiCrudGeneratorService::MakeUpdateRequest($name);
+            ApiCrudGeneratorService::MakeMigration($name);
+            ApiCrudGeneratorService::MakeRoute($name);
+            ApiCrudGeneratorService::MakeResource($name);
 
-        $this->info('Api Crud for '. $name. ' created successfully');
+            $this->info('Api Crud for '. $name. ' generated successfully. Check files');
+        }
+
+        if (! $api) {
+            CrudGeneratorService::MakeController($name);
+            CrudGeneratorService::MakeModel($name);
+            CrudGeneratorService::MakeStoreRequest($name);
+            CrudGeneratorService::MakeUpdateRequest($name);
+            CrudGeneratorService::MakeMigration($name);
+            CrudGeneratorService::MakeRoute($name);
+
+            $this->info('Crud for '. $name. ' generated successfully. Check files');
+        }
     }
 }
