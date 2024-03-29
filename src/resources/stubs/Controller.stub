@@ -44,6 +44,14 @@ class {{modelName}}Controller extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit({{modelName}} ${{modelNameSingularLowerCase}})
+    {
+        return view('admin.{{modelNameSingularLowerCase}}.edit', compact('{{modelNameSingularLowerCase}}'));
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update({{modelName}}UpdateRequest $request, {{modelName}} ${{modelNameSingularLowerCase}})

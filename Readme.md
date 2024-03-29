@@ -39,7 +39,7 @@ Supports CRUD operation for api's and ordinary CRUD.
 
 ## Installation via composer
 ```
-composer require vadimknh/laravel-crud-generator
+composer require vadimknh/laravel-crud-generator --dev
 ```
 
 And publish the configuration files
